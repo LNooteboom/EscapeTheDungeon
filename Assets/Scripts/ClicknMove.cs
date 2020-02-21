@@ -31,6 +31,7 @@ public class ClicknMove : MonoBehaviour
 		if (curTime <= 0.0f)
 		{
 			curSpeed = Vector3.zero;
+
 		} else {
 			curTime -= Time.deltaTime;
 		}
