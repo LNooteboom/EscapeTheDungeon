@@ -11,6 +11,7 @@ public class ClicknMove : MonoBehaviour
 
 	private Vector3 curSpeed;
 	private float curTime;
+	private bool reverse = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,8 +20,9 @@ public class ClicknMove : MonoBehaviour
 
 	void OnMouseDown()
 	{
-		curSpeed = speed;
+		curSpeed = reverse? -speed : speed;
 		curTime = time;
+		reverse = !reverse;
 	}
 
     // Update is called once per frame
