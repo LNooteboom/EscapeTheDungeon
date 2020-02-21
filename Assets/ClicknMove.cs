@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class ClicknMove : MonoBehaviour
 {
-	public Vector3 destination;
+	public Vector3 speed;
+
+	[Range(0.0f, 5.0f)]
 	public float time = 1.0f;
 
 	private Vector3 curSpeed;
+	private float curTime;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,17 +19,19 @@ public class ClicknMove : MonoBehaviour
 
 	void OnMouseDown()
 	{
-		curSpeed = transform.position - destination /
-			(Time.deltaTime * time);
+		curSpeed = speed;
+		curTime = time;
 	}
 
     // Update is called once per frame
     void Update()
     {
-		if (transform.position == destination)
+		if (curTime <= 0.0f)
 		{
-			curSpeed = 0;
+			curSpeed = Vector3.zero;
+		} else {
+			curTime -= Time.deltaTime;
 		}
- 		transform.position += curSpeed;
+ 		transform.position += curSpeed * Time.deltaTime;;
     }
 }
