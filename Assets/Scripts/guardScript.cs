@@ -9,6 +9,8 @@ public class guardScript : MonoBehaviour
     public byte moveAxis = 0;
     public float moveDistance = 10f;
     public float rotateSpeed;
+
+    public GameObject target;
     
     private Rigidbody rb;
     private Vector3 startPos;
@@ -16,7 +18,7 @@ public class guardScript : MonoBehaviour
 
     private Quaternion startTurn;
 
-    enum State{patrol, chase, turning}
+    enum State{patrol, chase, turning, lostPlayer}
 
     private State currentState;
 
@@ -51,6 +53,10 @@ public class guardScript : MonoBehaviour
 			case State.chase:
 				chase_Do();
     			break;
+
+    		case State.lostPlayer:
+    			lost_Do();
+    			break;
     	}
 	}
 
@@ -62,9 +68,12 @@ public class guardScript : MonoBehaviour
         if(heenweg){rb.MovePosition(transform.position + step);}
         else{rb.MovePosition(transform.position - step);}
 
+        if(seePlayer()){
+        	currentState = State.chase;
+        }
+
         if (Vector3.Distance(transform.position, startPos) > moveDistance)
         {
-        	print("a");
             currentState = State.turning;
             startTurn = transform.rotation;
         }
@@ -73,7 +82,6 @@ public class guardScript : MonoBehaviour
     void turning_Do(){
         
         var step = rotateSpeed * Time.deltaTime;
-        print("sep:"+step);
         transform.Rotate(0, step, 0);
 
         if (Quaternion.Angle(startTurn, transform.rotation) >= 179.9)
@@ -86,6 +94,43 @@ public class guardScript : MonoBehaviour
     }
 
     void chase_Do(){
+    	//move
+        var positionDelta = target.transform.position - transform.position;
+        var temp = moveSpeed * Time.deltaTime * positionDelta.normalized;
+        rb.MovePosition(transform.position + temp);
 
+        if(!seePlayer()){
+        	print("lost him");
+    		currentState = State.lostPlayer;
+    	}
+
+    	//rotate
+	    Quaternion rot = Quaternion.FromToRotation(transform.forward, target.transform.position - transform.position);
+	    transform.rotation *= rot;
+    }
+
+    void lost_Do(){
+    	if(seePlayer()){
+    		currentState = State.chase;
+    	}
+    }
+
+    bool seePlayer(){
+    	var targetDistance = Vector3.Distance(target.transform.position, transform.position);
+
+		Quaternion rot = Quaternion.FromToRotation(transform.forward, target.transform.position - transform.position);
+		var deHoek = Mathf.Abs(rot.eulerAngles.y);
+		// Debug.Log("deHoek: "+deHoek);
+
+	    // Vector3 directionToTarget = transform.position - target.transform.position;
+	    // float angle = Vector3.Angle(transform.forward, directionToTarget);
+
+        if (targetDistance <= 5 && deHoek < 90)
+        {
+        	print("spotted");
+            return true;
+        } else {
+        	return false;
+        }
     }
 }
