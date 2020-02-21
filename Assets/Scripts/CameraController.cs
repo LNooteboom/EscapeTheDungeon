@@ -5,13 +5,14 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public GameObject player;
-    public Vector3 offset;
-    public Vector3 rotation;
+    private Vector3 offset;
+    // public Vector3 rotation;
 
     void Start()
     {
-        transform.Rotate(rotation);
+        // transform.Rotate(rotation);
         // transform.Rotate(0, 45, 0);
+        offset = transform.position - player.transform.position;
     }
 
     void LateUpdate()
