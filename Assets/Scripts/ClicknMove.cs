@@ -5,6 +5,10 @@ using UnityEngine;
 public class ClicknMove : MonoBehaviour
 {
 	public Vector3 speed;
+	public Transform player;
+
+	[Range(0.0f, 5.0f)]
+	public float maxDistance = 1.0f;
 
 	[Range(0.0f, 5.0f)]
 	public float time = 1.0f;
@@ -20,9 +24,13 @@ public class ClicknMove : MonoBehaviour
 
 	void OnMouseDown()
 	{
-		curSpeed = reverse? -speed : speed;
-		curTime = time;
-		reverse = !reverse;
+		if (Vector3.Distance(transform.position, player.position) < 2)
+		{
+			curSpeed = reverse? -speed : speed;
+			curTime = time;
+			reverse = !reverse;
+			
+		}
 	}
 
     // Update is called once per frame
